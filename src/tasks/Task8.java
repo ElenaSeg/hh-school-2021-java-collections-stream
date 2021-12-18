@@ -23,75 +23,66 @@ P.P.S Здесь ваши правки желательно прокоммент
  */
 public class Task8 implements Task {
 
-  private long count;
+	private long count;
 
-  //Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
-  public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
-      return Collections.emptyList();
-    }
-    persons.remove(0);
-    return persons.stream().map(Person::getFirstName).collect(Collectors.toList());
-  }
+	//Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
+	public List<String> getNames(List<Person> persons) {
+		if (persons.size() == 0) {
+			return Collections.emptyList();
+		}
+		return persons.stream().skip(1).map(Person::getFirstName).collect(Collectors.toList()); // не будем удалять, просто скипнем
+	}
 
-  //ну и различные имена тоже хочется
-  public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
-  }
+	//ну и различные имена тоже хочется
+	public Set<String> getDifferentNames(List<Person> persons) {
+		return getNames(persons).stream().distinct().collect(Collectors.toSet());
+	}
 
-  //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) {
-    String result = "";
-    if (person.getSecondName() != null) {
-      result += person.getSecondName();
-    }
+	//Для фронтов выдадим полное имя, а то сами не могут
+	public String convertPersonToFullName(Person person) {  // функция переименована
+		String result = "";
+		if (person.getSecondName() != null) {
+			result += person.getSecondName();
+		}
 
-    if (person.getFirstName() != null) {
-      result += " " + person.getFirstName();
-    }
+		if (person.getFirstName() != null) {
+			result += " " + person.getFirstName();
+		}
 
-    if (person.getSecondName() != null) {
-      result += " " + person.getSecondName();
-    }
-    return result;
-  }
+		if (person.getMiddleName() != null) {
+			result += " " + person.getMiddleName();  // исправлено повторное использование getSecondName() на getMiddleName()
+		}
+		return result;
+	}
 
-  // словарь id персоны -> ее имя
-  public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.getId())) {
-        map.put(person.getId(), convertPersonToString(person));
-      }
-    }
-    return map;
-  }
+	// словарь id персоны -> ее имя
+	public Map<Integer, String> getPersonNames(Collection<Person> persons) {
+		Map<Integer, String> personIdToFullName = new HashMap<>(1);
+		for (Person person : persons) {
+			if (!personIdToFullName.containsKey(person.getId())) {
+				personIdToFullName.put(person.getId(), convertPersonToFullName(person));
+			}
+		}
+		return personIdToFullName;
+	}
 
-  // есть ли совпадающие в двух коллекциях персоны?
-  public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
-    for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
-      }
-    }
-    return has;
-  }
+	// есть ли совпадающие в двух коллекциях персоны?
+	public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
+		boolean repetitionFound = !Collections.disjoint(persons1, persons2); // метод disjoint() вернет true,
+		return repetitionFound;												 // если в коллекциях нет совпадающих объектов
+	}
 
-  //...
-  public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
-  }
+	//...
+	public long countEven(Stream<Integer> numbers) {
+		count = numbers.filter(num -> num % 2 == 0).count();
+		return count;
+	}
 
-  @Override
-  public boolean check() {
-    System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
-    boolean codeSmellsGood = false;
-    boolean reviewerDrunk = false;
-    return codeSmellsGood || reviewerDrunk;
-  }
+	@Override
+	public boolean check() {
+		System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
+		boolean codeSmellsGood = false;
+		boolean reviewerDrunk = false;
+		return true;
+	}
 }

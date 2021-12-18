@@ -4,9 +4,10 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /*
@@ -16,12 +17,21 @@ import java.util.stream.Collectors;
 нужно их отсортировать в том же порядке, что и переданные id.
 Оценить асимпотику работы
  */
+
+// O(n)
 public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = PersonService.findPersons(personIds);
-    return Collections.emptyList();
+    Map<Integer, Person> personIdToPerson = persons.stream()
+            .collect(Collectors.toMap(Person::getId, Function.identity()));
+
+    List<Person> sortedPersons = personIds.stream() //преобразуем отсортированные Id персон в стрим,
+            .map(personId -> personIdToPerson.get(personId))  // и в соответствующем порядке извлекаем из мапы personIdToPerson
+            .collect(Collectors.toList());
+
+    return sortedPersons;
   }
 
   @Override
