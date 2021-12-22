@@ -3,11 +3,12 @@ package tasks;
 import common.ApiPersonDto;
 import common.Person;
 import common.Task;
+import java.util.stream.Collectors;
+
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
 /*
 Задача 4
 Список персон класса Person необходимо сконвертировать в список ApiPersonDto
@@ -19,7 +20,8 @@ public class Task4 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons) {
-    return new ArrayList<>();
+    return persons.stream().map(Task4::convert)
+            .collect(Collectors.toList());
   }
 
   private static ApiPersonDto convert(Person person) {
