@@ -3,7 +3,7 @@ package common;
 import java.time.Instant;
 import java.util.Objects;
 
-public class Person implements Comparable<Person> {
+public class Person {
   private Integer id;
   private String firstName;
   private String secondName;
@@ -86,18 +86,5 @@ public class Person implements Comparable<Person> {
   @Override
   public int hashCode() {
     return Objects.hash(id, firstName, secondName, middleName, createdAt);
-  }
-
-  @Override
-  public int compareTo(Person person) {
-    if (secondName.equals(person.getSecondName())) {
-
-      if (firstName.equals(person.getFirstName()))
-        return createdAt.compareTo(person.getCreatedAt());
-      else
-        return firstName.compareTo(person.getFirstName());
-    }
-    else
-      return secondName.compareTo(person.getSecondName());
   }
 }

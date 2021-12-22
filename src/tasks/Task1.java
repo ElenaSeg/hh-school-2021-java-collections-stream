@@ -27,11 +27,9 @@ public class Task1 implements Task {
     Map<Integer, Person> personIdToPerson = persons.stream()
             .collect(Collectors.toMap(Person::getId, Function.identity()));
 
-    List<Person> sortedPersons = personIds.stream() //преобразуем отсортированные Id персон в стрим,
-            .map(personId -> personIdToPerson.get(personId))  // и в соответствующем порядке извлекаем из мапы personIdToPerson
+    return personIds.stream()
+            .map(personIdToPerson::get)
             .collect(Collectors.toList());
-
-    return sortedPersons;
   }
 
   @Override

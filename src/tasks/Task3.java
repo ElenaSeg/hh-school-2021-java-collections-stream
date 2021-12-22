@@ -18,24 +18,11 @@ public class Task3 implements Task {
 
 	// !!! Редактируйте этот метод !!!
 
-	// в класс Person добавлен метод compareTo(Person person), который сортирует в требуемом порядке,
-	// поэтому можно просто воспользоваться оператором sorted()
 	private List<Person> sort(Collection<Person> persons) {
-    List<Person> sortedPersons = new ArrayList<>(persons.stream()
-            .sorted()
-            .collect(Collectors.toList()));
-    return sortedPersons;
-
-	// update: обнаружила метод thenComparing(), он наверно и имелся
-	// вами в виду при составлении задания. но я уже не стала удалять из класса Person метод compareTo....
-	// иначе зачем он имплементит интерфейс Comparable?...........
-// Вариант 2
-//		List<Person> sortedPersons = persons.stream()
-//				.sorted(Comparator.comparing(Person::getSecondName)
-//						.thenComparing(Person::getFirstName)
-//						.thenComparing(Person::getCreatedAt))
-//				.collect(Collectors.toList());
-//		return sortedPersons;
+		return  persons.stream().sorted(Comparator.comparing(Person::getSecondName)
+						.thenComparing(Person::getFirstName)
+						.thenComparing(Person::getCreatedAt))
+						.collect(Collectors.toList());
 	}
 
 	@Override

@@ -3,12 +3,8 @@ package tasks;
 import common.Person;
 import common.Task;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,49 +26,38 @@ public class Task8 implements Task {
 		if (persons.size() == 0) {
 			return Collections.emptyList();
 		}
-		return persons.stream().skip(1).map(Person::getFirstName).collect(Collectors.toList()); // не будем удалять, просто скипнем
+		return persons.stream().skip(1).map(Person::getFirstName).collect(Collectors.toList());
+		// не будем удалять, просто скипнем
+		// так лучше, потому что позволяет сохранить без изменений исходный список персон
 	}
 
 	//ну и различные имена тоже хочется
 	public Set<String> getDifferentNames(List<Person> persons) {
-		return getNames(persons).stream().distinct().collect(Collectors.toSet());
+		return new HashSet<>(getNames(persons));
 	}
 
 	//Для фронтов выдадим полное имя, а то сами не могут
 	public String convertPersonToFullName(Person person) {  // функция переименована
-		String result = "";
-		if (person.getSecondName() != null) {
-			result += person.getSecondName();
-		}
-
-		if (person.getFirstName() != null) {
-			result += " " + person.getFirstName();
-		}
-
-		if (person.getMiddleName() != null) {
-			result += " " + person.getMiddleName();  // исправлено повторное использование getSecondName() на getMiddleName()
-		}
-		return result;
+		if (person == null) // а какой баг имелся в виду? типа что может упасть, если вместо персоны null передать?
+			return "";		// больше я вроде ниче не заметила багового..
+		return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName()) // ну теперь красиво?)
+				.filter(Objects::nonNull).collect(Collectors.joining(" "));
 	}
 
 	// словарь id персоны -> ее имя
 	public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-		Map<Integer, String> personIdToFullName = new HashMap<>(1);
-		for (Person person : persons) {
-			if (!personIdToFullName.containsKey(person.getId())) {
-				personIdToFullName.put(person.getId(), convertPersonToFullName(person));
-			}
-		}
-		return personIdToFullName;
+		return persons.stream().collect(Collectors.toMap(Person::getId,
+										this::convertPersonToFullName,
+										(previous, next) -> previous));
 	}
 
 	// есть ли совпадающие в двух коллекциях персоны?
 	public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-		boolean repetitionFound = !Collections.disjoint(persons1, persons2); // метод disjoint() вернет true,
-		return repetitionFound;												 // если в коллекциях нет совпадающих объектов
-	}
+		return !Collections.disjoint(persons1, persons2); // метод disjoint() вернет true,
+	}	 											 // если в коллекциях нет совпадающих объектов
 
 	//...
+	// метод вроде и до правок функционировал верно, но так проще для восприятия
 	public long countEven(Stream<Integer> numbers) {
 		count = numbers.filter(num -> num % 2 == 0).count();
 		return count;
@@ -81,8 +66,8 @@ public class Task8 implements Task {
 	@Override
 	public boolean check() {
 		System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
-		boolean codeSmellsGood = false;
+		boolean codeSmellsGood = true;
 		boolean reviewerDrunk = false;
-		return true;
+		return codeSmellsGood||reviewerDrunk;
 	}
 }
